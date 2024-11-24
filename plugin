@@ -1,0 +1,47 @@
+var pluginName = "TokenManager";
+var pluginVersion = "1.0.0";
+var pluginDescription = "Plugin quản lý backup và restore token. Không được dùng vào mục đích xấu.";
+
+const TokenManager = {
+  name: pluginName,
+  version: pluginVersion,
+  description: pluginDescription,
+  onStart() {
+    console.log(`[${pluginName}] đã được kích hoạt.`);
+  },
+  onStop() {
+    console.log(`[${pluginName}] đã bị vô hiệu hóa.`);
+  },
+  backupToken(token) {
+    const fs = require('fs');
+    try {
+      fs.writeFileSync('token_backup.txt', token, 'utf8');
+      console.log(`[${pluginName}] Token đã được backup thành công!`);
+    } catch (err) {
+      console.error(`[${pluginName}] Lỗi khi backup token:`, err);
+    }
+  },
+  restoreToken() {
+    const fs = require('fs');
+    try {
+      if (fs.existsSync('token_backup.txt')) {
+        const token = fs.readFileSync('token_backup.txt', 'utf8');
+        console.log(`[${pluginName}] Token đã được khôi phục:`, token);
+        return token;
+      } else {
+        console.log(`[${pluginName}] Không tìm thấy file backup.`);
+        return null;
+      }
+    } catch (err) {
+      console.error(`[${pluginName}] Lỗi khi restore token:`, err);
+      return null;
+    }
+  },
+};
+
+// Đăng ký plugin
+window.enmity.plugins.registerPlugin(TokenManager);
+
+// Test các hàm
+// TokenManager.backupToken("your_token_here"); // Thay your_token_here bằng token thực tế
+// TokenManager.restoreToken();
